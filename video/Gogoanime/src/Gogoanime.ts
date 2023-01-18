@@ -13,9 +13,9 @@ const GOGO_KEYS = {
     iv: CryptoJS.enc.Utf8.parse('3134003223491201'),
 }
 
-const STREAMSB_HOST = 'https://streamsss.net/sources49'
-const STREAMSB_PAYLOAD_START = '41794e71437657784e6845657c7c'
-const STREAMSB_PAYLOAD_END = '7c7c393579706a5471624b707a567c7c73747265616d7362'
+const STREAMSB_HOST = 'https://streamsss.net/sources50'
+const STREAMSB_PAYLOAD_START = '5773626d62663976713374717c7c'
+const STREAMSB_PAYLOAD_END = '7c7c346f323179543569386f31597c7c73747265616d7362'
 
 let mappings: {[key: string]: {[key2: string]: string}} = {}
 
@@ -216,19 +216,19 @@ export default class GogoanimeSource extends VideoSource {
                 id: "year",
                 value: [],
                 name: "Year",
-                selections: seasons.map(x => x.name)
+                selections: years.map(x => x.name)
             }),
             createMultiSelectFilter({
                 id: "type",
                 value: [],
                 name: "Type",
-                selections: seasons.map(x => x.name)
+                selections: types.map(x => x.name)
             }),
             createMultiSelectFilter({
-                id: "season",
+                id: "status",
                 value: [],
                 name: "Status",
-                selections: seasons.map(x => x.name)
+                selections: statuses.map(x => x.name)
             })
         ]
     }
@@ -360,7 +360,7 @@ export default class GogoanimeSource extends VideoSource {
                 'Referer': serverUrl
             }
         }).then(res => { try { return JSON.parse(res.data) } catch { return null } }).catch(() => null)
-        if (!res.stream_data) return []
+        if (typeof res?.stream_data === 'undefined' || res?.stream_data === null) return []
         const m3u8Urls = await fetch(res.stream_data.file, {
             headers: {
                 'User-Agent': USER_AGENT,
