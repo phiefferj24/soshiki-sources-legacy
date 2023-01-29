@@ -65,9 +65,9 @@ export default class Source extends ImageSource {
                         }
                     }
                     break
-                case 'demographic': for (const demographic of (filter as MultiSelectFilter).value) url += `&publicationDemographic[]=${demographic.toLowerCase}`; break
-                case 'contentRating': for (const rating of (filter as MultiSelectFilter).value) url += `&contentRating[]=${rating.toLowerCase}`; break
-                case 'status': for (const status of (filter as MultiSelectFilter).value) url += `&status[]=${status.toLowerCase}`; break
+                case 'demographic': for (const demographic of (filter as MultiSelectFilter).value) url += `&publicationDemographic[]=${demographic.toLowerCase()}`; break
+                case 'contentRating': for (const rating of (filter as MultiSelectFilter).value) url += `&contentRating[]=${rating.toLowerCase()}`; break
+                case 'status': for (const status of (filter as MultiSelectFilter).value) url += `&status[]=${status.toLowerCase()}`; break
                 case 'sort': 
                     switch ((filter as AscendableSortFilter).value?.[0]) {
                         case 'Latest Chapter': url += `&order[latestUploadedChapter]=${(filter as AscendableSortFilter).value![1] ? 'asc' : 'desc'}`; break
