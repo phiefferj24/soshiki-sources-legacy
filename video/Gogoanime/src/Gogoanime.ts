@@ -122,7 +122,7 @@ export default class GogoanimeSource extends VideoSource {
             episodes.push(createVideoEpisode({
                 id: href,
                 entryId: id,
-                episode: parseFloat(href.match(/(?:.*?)(\d+)/)?.[1] ?? "0"),
+                episode: parseFloat(href.match(/(?:.*?)episode-(\d+)/)?.[1] ?? "0"),
                 type: typeText === 'sub' ? VideoEpisodeType.sub : typeText === 'dub' ? VideoEpisodeType.dub : VideoEpisodeType.unknown
             }))
         }
