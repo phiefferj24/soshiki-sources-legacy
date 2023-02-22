@@ -13,7 +13,7 @@ const GOGO_KEYS = {
     iv: CryptoJS.enc.Utf8.parse('3134003223491201'),
 }
 
-const STREAMSB_HOST = 'https://streamsss.net/sources50'
+const STREAMSB_HOST = 'https://streamsss.net'
 const STREAMSB_PAYLOAD_START = '5773626d62663976713374717c7c'
 const STREAMSB_PAYLOAD_END = '7c7c346f323179543569386f31597c7c73747265616d7362'
 
@@ -155,7 +155,7 @@ export default class GogoanimeSource extends VideoSource {
                 urls: await this.getStreamSBUrls(streamSBServerUrl)
             }))())
         }
-        const providers = (await Promise.all(promises)).sort((a, b) => a.name === getSettingsValue("preferredProvider") ? -1 : b.name === getSettingsValue("preferredProvider") ? 1 : 0)
+        const providers = (await Promise.all(promises)).filter(provider => provider.urls.length > 0).sort((a, b) => a.name === getSettingsValue("preferredProvider") ? -1 : b.name === getSettingsValue("preferredProvider") ? 1 : 0)
 
         return createVideoEpisodeDetails({
             id,
@@ -348,12 +348,20 @@ export default class GogoanimeSource extends VideoSource {
     }
 
     async getStreamSBUrls(serverUrl: string): Promise<VideoEpisodeUrl[]> {
+        const rawDocument = await fetch(serverUrl).then(res => res.data)
+        const jsFile = rawDocument.match(/<script src=\"(\/js\/app\.min\.\d+\.js)\">/)?.[1]
+        if (typeof jsFile !== 'string') return []
+        const sourcesPath = await fetch(STREAMSB_HOST + jsFile).then(res => res.data).then(data => {
+            const match = data.match(/\'(ces\w{2,3})\'/)?.[1]
+            return typeof match === 'string' ? `sour${match}` : null
+        })
+        if (sourcesPath === null) return []
         let id = serverUrl.split('/e/').pop()
         if (id?.includes("html")) id = id.split('.html')[0]
         if (typeof id === 'undefined') return []
         let hexEncoded = ""
         for (let i = 0; i < id.length; ++i) hexEncoded += ("0"+id.charCodeAt(i).toString(16)).slice(-2)
-        const res = await fetch(`${STREAMSB_HOST}/${STREAMSB_PAYLOAD_START}${hexEncoded}${STREAMSB_PAYLOAD_END}`, {
+        const res = await fetch(`${STREAMSB_HOST}/${sourcesPath}/${STREAMSB_PAYLOAD_START}${hexEncoded}${STREAMSB_PAYLOAD_END}`, {
             headers: {
                 'watchsb': 'sbstream',
                 'User-Agent': USER_AGENT,
