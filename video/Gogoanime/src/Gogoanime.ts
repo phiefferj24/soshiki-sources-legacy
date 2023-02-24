@@ -266,7 +266,7 @@ export default class GogoanimeSource extends VideoSource {
         let newHeaders: {[key: string]: string} = {
             Referer: url.match(/([^\?]*)\?(.*)/)?.[1] ?? ""
         }
-        if (url.includes("akamai-cdn-content.com")) { // streamsb
+        if (url.includes("akamai")) { // streamsb
             newHeaders["watchsb"] = "streamsb"
             newHeaders["User-Agent"] = USER_AGENT
         }
