@@ -4,5 +4,6 @@
     "id": "multi_mangadex",
     "icon": "icon.png",
     "version": "0.0.1",
-    "type": "image"
+    "type": "image",
+    "schema": 1
 }

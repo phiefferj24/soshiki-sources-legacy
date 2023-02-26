@@ -349,12 +349,16 @@ export default class GogoanimeSource extends VideoSource {
 
     async getStreamSBUrls(serverUrl: string): Promise<VideoEpisodeUrl[]> {
         const rawDocument = await fetch(serverUrl).then(res => res.data)
-        const jsFile = rawDocument.match(/<script src=\"(\/js\/app\.min\.\d+\.js)\">/)?.[1]
-        if (typeof jsFile !== 'string') return []
-        const sourcesPath = await fetch(STREAMSB_HOST + jsFile).then(res => res.data).then(data => {
-            const match = data.match(/\'(ces\w{2,3})\'/)?.[1]
-            return typeof match === 'string' ? `sour${match}` : null
-        })
+        const match = rawDocument.match(/\'(ces\w{2,3})\'/)?.[1]
+        let sourcesPath = typeof match === 'string' ? `sour${match}` : null
+        if (sourcesPath === null) {
+            const jsFile = rawDocument.match(/<script src=\"(\/js\/app\.min\.\d+\.js)\">/)?.[1]
+            if (typeof jsFile !== 'string') return []
+            sourcesPath = await fetch(STREAMSB_HOST + jsFile).then(res => res.data).then(data => {
+                const match = data.match(/\'(ces\w{2,3})\'/)?.[1]
+                return typeof match === 'string' ? `sour${match}` : null
+            })
+        }
         if (sourcesPath === null) return []
         let id = serverUrl.split('/e/').pop()
         if (id?.includes("html")) id = id.split('.html')[0]
@@ -376,7 +380,6 @@ export default class GogoanimeSource extends VideoSource {
                 'Accept-Language': 'en-US,en;q=0.9'
             },
         }).then(res => res.data).catch(() => null)
-
         if (m3u8Urls === null) return []
       
         const videoList = m3u8Urls.split('#EXT-X-STREAM-INF:')

@@ -4,5 +4,6 @@
     "id": "en_readlightnovels",
     "icon": "icon.png",
     "version": "0.0.1",
-    "type": "text"
+    "type": "text",
+    "schema": 1
 }
