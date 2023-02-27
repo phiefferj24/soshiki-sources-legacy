@@ -1,0 +1,23 @@
+{
+  "name": "manganato",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "",
+    "package": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "soshiki-sources": "^0.1.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-classes": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "@types/node": "^16.18.3"
+  }
+}
