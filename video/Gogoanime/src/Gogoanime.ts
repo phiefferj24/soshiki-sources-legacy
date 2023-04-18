@@ -1,7 +1,7 @@
 import { createEntry, createEntryResults, createVideoEpisodeDetails, Entry, EntryContentRating, EntryResults, EntryResultsInfo, EntryStatus, FetchOptions, Listing, VideoEpisode, VideoEpisodeDetails, VideoSource, Filter, Document, createShortEntry, fetch, createMultiSelectFilter, createSortFilter, MultiSelectFilter, SortFilter, ShortEntry, createListing, createVideoEpisode, VideoEpisodeType, VideoEpisodeUrl, VideoEpisodeUrlType, createVideoEpisodeProvider, VideoEpisodeProvider, createSegmentFilter } from "soshiki-sources"
 import CryptoJS from "crypto-es"
 
-const BASE_URL = "https://www1.gogoanime.bid"
+const BASE_URL = "https://gogoanime.cl"
 const AJAX_URL = "https://ajax.gogo-load.com"
 
 const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
