@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "soshiki-sources": "file:../../../soshiki-sources/soshiki-sources-0.1.0.tgz"
+    "soshiki-sources": "^0.2.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",

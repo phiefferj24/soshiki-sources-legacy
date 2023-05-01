@@ -54,7 +54,7 @@ let directoryUrl = serverUrl()
 let directory: SiteEntry[] | undefined
 
 function serverUrl(): string {
-    return getSettingsValue("serverUrl") === "Manga4Life" ? ML_SITE_URL : MS_SITE_URL
+    return getSettingsValue("serverUrl", "en_mangasee") === "Manga4Life" ? ML_SITE_URL : MS_SITE_URL
 }
 
 async function fetchDirectory() {
@@ -64,6 +64,7 @@ async function fetchDirectory() {
 }
 
 export default class Source extends ImageSource {
+    id = "en_mangasee"
     async getListing(previousInfo: EntryResultsInfo | null, listing: Listing): Promise<EntryResults> {
         if (typeof directory === 'undefined' || serverUrl() !== directoryUrl) await fetchDirectory()
         return createEntryResults({

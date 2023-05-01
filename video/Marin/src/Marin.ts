@@ -10,6 +10,7 @@ let mappings: {[key: string]: {[key2: string]: string | number}} = {}
 let cookies: string[] = []
 
 export default class MarinSource extends VideoSource {
+    id = "multi_marin"
     async getListing(previousInfo: EntryResultsInfo | null, listing: Listing): Promise<EntryResults> {
         const page = previousInfo === null ? 1 : previousInfo.page + 1
         const data = {

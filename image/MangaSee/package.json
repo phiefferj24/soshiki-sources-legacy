@@ -14,7 +14,7 @@
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "fuzzysort": "^2.0.4",
-    "soshiki-sources": "^0.1.0"
+    "soshiki-sources": "^0.2.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-classes": "^7.20.2",

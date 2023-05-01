@@ -4,6 +4,7 @@ const BASE_URL = "https://readlightnovels.net"
 const AJAX_URL = "https://readlightnovels.net/wp-admin/admin-ajax.php"
 
 export default class ReadLightNovelsSource extends TextSource {
+    id = "en_readlightnovels"
     async getListing(previousInfo: EntryResultsInfo | null, listing: Listing): Promise<EntryResults> {
         const page = previousInfo?.page ?? 1
         const url = `${BASE_URL}/${listing.id === 'completed' ? 'completed' : 'latest'}/page/${page}`

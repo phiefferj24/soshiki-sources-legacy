@@ -20,6 +20,7 @@ const STREAMSB_PAYLOAD_END = '7c7c346f323179543569386f31597c7c73747265616d7362'
 let mappings: {[key: string]: {[key2: string]: string}} = {}
 
 export default class GogoanimeSource extends VideoSource {
+    id = "en_gogoanime"
     async getListing(previousInfo: EntryResultsInfo | null, listing: Listing): Promise<EntryResults> {
         const page = previousInfo === null ? 1 : previousInfo.page + 1
         let entries: ShortEntry[] = []
@@ -155,7 +156,7 @@ export default class GogoanimeSource extends VideoSource {
                 urls: await this.getStreamSBUrls(streamSBServerUrl)
             }))())
         }
-        const providers = (await Promise.all(promises)).filter(provider => provider.urls.length > 0).sort((a, b) => a.name === getSettingsValue("preferredProvider") ? -1 : b.name === getSettingsValue("preferredProvider") ? 1 : 0)
+        const providers = (await Promise.all(promises)).filter(provider => provider.urls.length > 0).sort((a, b) => a.name === this.getSettingsValue("preferredProvider") ? -1 : b.name === this.getSettingsValue("preferredProvider") ? 1 : 0)
 
         return createVideoEpisodeDetails({
             id,

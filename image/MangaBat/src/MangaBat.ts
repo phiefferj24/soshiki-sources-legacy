@@ -6,6 +6,7 @@ const BASE_URL = "https://h.mangabat.com"
 let tagMappings: {[key: string]: string} = {}
 
 export default class Source extends ImageSource {
+    id = "en_mangabat"
     async getListing(previousInfo: EntryResultsInfo | null, listing: Listing): Promise<EntryResults> {
         const page = previousInfo === null ? 1 : previousInfo.page + 1
         const document = await fetch(`${BASE_URL}/manga-list-all/${page}${listing.id === "" || listing.id === "latest" ? "" : `?type=${listing.id}`}`).then(res => Document.parse(res.data))

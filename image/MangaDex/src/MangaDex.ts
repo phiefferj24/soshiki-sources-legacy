@@ -28,13 +28,14 @@ function getContentRating(rating: string): EntryContentRating {
 }
 
 export default class Source extends ImageSource {
+    id = "multi_mangadex"
     async getListing(previousInfo: EntryResultsInfo | null, listing: Listing): Promise<EntryResults> {
         const page = previousInfo === null ? 1 : previousInfo.page + 1
         const offset = (page - 1) * MANGA_PER_PAGE
 
         const res = await fetch(`${API_URL}/manga?order[${listing.id === 'latest' ? 'latestUploadedChapter' : 'followedCount'}]=desc&includes[]=cover_art&includes[]=author&includes[]=artist&limit=${MANGA_PER_PAGE}&offset=${offset}`).then(res => JSON.parse(res.data))
 
-        const coverQuality = getSettingsValue("coverQuality")
+        const coverQuality = this.getSettingsValue("coverQuality")
 
         return createEntryResults({
             page: page,
@@ -89,7 +90,7 @@ export default class Source extends ImageSource {
 
         const res = await fetch(url).then(res => JSON.parse(res.data))
 
-        const coverQuality = getSettingsValue("coverQuality")
+        const coverQuality = this.getSettingsValue("coverQuality")
 
         return createEntryResults({
             page: page,
@@ -105,7 +106,7 @@ export default class Source extends ImageSource {
     async getEntry(id: string): Promise<Entry> {
         const res = await fetch(`${API_URL}/manga/${id}?includes[]=cover_art&includes[]=author&includes[]=artist`).then(res => JSON.parse(res.data).data)
 
-        const coverQuality = getSettingsValue("coverQuality")
+        const coverQuality = this.getSettingsValue("coverQuality")
     
         return {
             id: id,
@@ -124,9 +125,9 @@ export default class Source extends ImageSource {
         let offset = 0
         let url = `${API_URL}/manga/${id}/feed?order[volume]=desc&order[chapter]=desc&translatedLanguage[]=en&includes[]=scanlation_group&limit=500&offset=${offset}`
 
-        const blockedGroups = getSettingsValue("blockedScanlators")
+        const blockedGroups = this.getSettingsValue("blockedScanlators")
         if (blockedGroups) for (const group of blockedGroups.split(",")) url += `&excludedGroups[]=${group.trim()}`
-        const blockedUploaders = getSettingsValue("blockedScanlators")
+        const blockedUploaders = this.getSettingsValue("blockedScanlators")
         if (blockedUploaders) for (const group of blockedUploaders.split(",")) url += `&excludedUploaders[]=${group.trim()}`
 
         while (true) {
@@ -148,7 +149,7 @@ export default class Source extends ImageSource {
     async getChapterDetails(id: string, entryId: string): Promise<ImageChapterDetails> {
         const res = await fetch(`https://api.mangadex.org/at-home/server/${id}`).then(res => JSON.parse(res.data))
 
-        const dataSaver = getSettingsValue("dataSaver") as boolean
+        const dataSaver = this.getSettingsValue("dataSaver") as boolean
 
         return {
             id,
