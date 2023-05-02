@@ -123,7 +123,7 @@ export default class Source extends ImageSource {
     async getChapters(id: string): Promise<ImageChapter[]> {
         let chapters: ImageChapter[] = []
         let offset = 0
-        let url = `${API_URL}/manga/${id}/feed?order[volume]=desc&order[chapter]=desc&translatedLanguage[]=en&includes[]=scanlation_group&limit=500&offset=${offset}`
+        let url = `${API_URL}/manga/${id}/feed?includeExternalUrl=0&order[volume]=desc&order[chapter]=desc&translatedLanguage[]=en&includes[]=scanlation_group&limit=500&offset=${offset}`
 
         const blockedGroups = this.getSettingsValue("blockedScanlators")
         if (blockedGroups) for (const group of blockedGroups.split(",")) url += `&excludedGroups[]=${group.trim()}`

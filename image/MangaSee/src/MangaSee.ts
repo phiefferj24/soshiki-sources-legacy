@@ -157,12 +157,13 @@ export default class Source extends ImageSource {
     async getChapterDetails(id: string, entryId: string): Promise<ImageChapterDetails> {
         const html = await fetch(`${serverUrl()}/read-online/${id}`).then(res => res.data)
         const chapter: Required<SiteChapter> = JSON.parse(`{${html.match(/vm\.CurChapter \= \{(.*?)\};/)?.[1] ?? ''}}`)
+        const parsedId = html.match(/<a href="\/manga\/(.*?)" class="btn btn-sm btn-outline-secondary">/)?.[1] ?? entryId
         const baseUrl = `https://${html.match(/vm\.CurPathName \= \"(.*?)\";/)?.[1] ?? ''}`
         let pages: ImageChapterPage[] = []
         for (let page = 1; page <= parseInt(chapter.Page); ++page) {
             pages.push(createImageChapterPage({
                 index: page - 1,
-                url: `${baseUrl}/manga/${entryId}/${chapter.Chapter.substring(1, 5)}-${`000${page}`.substring(`000${page}`.length - 3)}.png`
+                url: `${baseUrl}/manga/${parsedId}/${chapter.Chapter.substring(1, 5)}-${`000${page}`.substring(`000${page}`.length - 3)}.png`
             }))
         }
         return createImageChapterDetails({
