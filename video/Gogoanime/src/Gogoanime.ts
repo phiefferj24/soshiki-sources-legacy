@@ -40,15 +40,27 @@ export default class GogoanimeSource extends VideoSource {
             document.free();
         } else {
             const document = Document.parse(await fetch(`${AJAX_URL}/ajax/page-recent-release.html?page=${page}&type=${listing.id}`).then(res => `<html>${res.data}</html>`))
-            const items = document.querySelectorAll("div.last_episodes ul.items > li")
+            const items = document.querySelectorAll("div.last_episodes > ul.items > li")
             for (const item of items) {
                 entries.push(createShortEntry({
-                    id: item.querySelector("a").getAttribute("href"),
+                    id: "/category" + item.querySelector("a").getAttribute("href").replace(/-episode-(\d+)$/, ""),
                     title: item.querySelector("p.name").innerText.trim(),
                     subtitle: item.querySelector("p.episode").innerText.trim(),
                     cover: item.querySelector("img").getAttribute("src")
                 }))
             }
+            /*
+            <li>        
+      <div class="img">
+        <a href="/the-marginal-service-episode-4" title="The Marginal Service">
+          <img src="https://gogocdn.net/cover/the-marginal-service.png" alt="The Marginal Service" />
+          <div class="type ic-SUB"></div>
+        </a>
+      </div>
+      <p class="name"><a href="/the-marginal-service-episode-4" title="The Marginal Service">The Marginal Service</a></p>
+      <p class="episode">Episode 4</p>                   
+    </li>
+            */
             document.free();
         }
         return createEntryResults({

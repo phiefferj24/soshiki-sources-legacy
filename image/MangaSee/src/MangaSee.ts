@@ -79,7 +79,7 @@ export default class Source extends ImageSource {
                     default: return 0
                 }
             }).map(entry => createShortEntry({
-                id: entry.i,
+                id: entry.i.toLowerCase(),
                 title: entry.s,
                 subtitle: "",
                 cover: `${IMAGE_SERVER_URL}/cover/${entry.i}.jpg`
@@ -113,7 +113,7 @@ export default class Source extends ImageSource {
                     default: return 0
                 }
             }).map(entry => createShortEntry({
-                id: entry.obj.i,
+                id: entry.obj.i.toLowerCase(),
                 title: entry.obj.s,
                 subtitle: "",
                 cover: `${IMAGE_SERVER_URL}/cover/${entry.obj.i}.jpg`
@@ -122,9 +122,9 @@ export default class Source extends ImageSource {
     }
     async getEntry(id: string): Promise<Entry> {
         if (typeof directory === 'undefined' || serverUrl() !== directoryUrl) await fetchDirectory()
-        const entry = directory!.find(item => item.i === id)!
+        const entry = directory!.find(item => item.i.toLowerCase() === id)!
         return {
-            id: entry.i,
+            id,
             title: entry.s,
             staff: entry.a,
             tags: entry.g,
