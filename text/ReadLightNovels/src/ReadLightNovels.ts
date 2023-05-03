@@ -12,8 +12,10 @@ export default class ReadLightNovelsSource extends TextSource {
         const items = document.querySelectorAll("div.home-truyendecu > a")
         let entries: ShortEntry[] = []
         for (const item of items) {
+            const id = item.getAttribute("href")
+            if (id.match(/id(\d+)\.html$/) !== null) continue
             entries.push(createShortEntry({
-                id: item.getAttribute("href"),
+                id,
                 title: item.getAttribute("title"),
                 subtitle: "",
                 cover: item.querySelector("img").getAttribute("src")
@@ -35,8 +37,10 @@ export default class ReadLightNovelsSource extends TextSource {
         const items = document.querySelectorAll("div.home-truyendecu > a")
         let entries: ShortEntry[] = []
         for (const item of items) {
+            const id = item.getAttribute("href")
+            if (id.match(/id(\d+)\.html$/) !== null) continue
             entries.push(createShortEntry({
-                id: item.getAttribute("href"),
+                id,
                 title: item.getAttribute("title"),
                 subtitle: "",
                 cover: item.querySelector("img").getAttribute("src")
@@ -50,7 +54,11 @@ export default class ReadLightNovelsSource extends TextSource {
         })
     }
     async getEntry(id: string): Promise<Entry> {
-        const document = await fetch(id).then(res => Document.parse(res.data))
+        const document = await fetch(id, {
+            headers: {
+                "Referer": "https://readlightnovels.net/"
+            }
+        }).then(res => Document.parse(res.data))
         const info = document.querySelectorAll("div.info > div")
         const entry = createEntry({
             id,
