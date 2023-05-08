@@ -1,0 +1,19 @@
+{
+  "name": "gogoanime",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "soshiki-sources": "file:../../../soshiki-sources/soshiki-sources-0.2.1.tgz"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.20.2",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0"
+  }
+}
