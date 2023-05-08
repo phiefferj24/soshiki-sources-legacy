@@ -1,0 +1,9 @@
+{
+    "name": "Crunchyroll",
+    "author": "JimIsWayTooEpic",
+    "id": "multi_crunchyroll",
+    "icon": "icon.png",
+    "version": "0.0.1",
+    "type": "video",
+    "schema": 1
+}
