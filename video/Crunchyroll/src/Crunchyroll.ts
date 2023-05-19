@@ -120,23 +120,40 @@ export default class GogoanimeSource extends VideoSource {
         ).then(data => data.flat(3).sort((a: any, b: any) => b.season - a.season === 0 ? b.episode - a.episode : b.season - a.season))
     }
     async getEpisodeDetails(id: string, entryId: string): Promise<VideoEpisodeDetails> {
-        console.log(`${this.BASE_URL}/content/v2/cms/videos/${id}/streams`)
         const json = await this.fetchAuth(`${this.BASE_URL}/content/v2/cms/videos/${id}/streams`).then(res => JSON.parse(res.data))
-        if (typeof json?.data[0] === 'undefined') console.log(JSON.stringify(json))
         const streams = json.data[0].adaptive_hls
+        const promises = Object.values(streams).filter((stream: any) => stream.hardsub_locale === this.locale).map((stream: any) => new Promise(async res => {
+            const m3u8Urls = await fetch(stream.url).then(resp => resp.data).catch(() => null)
+            if (m3u8Urls === null) return createVideoEpisodeProvider({
+                name: `Crunchyroll (${stream.hardsub_locale === "" ? "none" : stream.hardsub_locale})`,
+                urls: []
+            })
+
+            const videoList = m3u8Urls.split('#EXT-X-STREAM-INF:')
+          
+            let urls: VideoEpisodeUrl[] = []
+            for (const video of videoList ?? []) {
+                if (!video.includes('m3u8')) continue
+    
+                const url = video.split('\n')[1]
+                const quality = video.split('RESOLUTION=')[1].split(',')[0].split('x')[1]
+                urls.push({
+                    url,
+                    quality: parseFloat(quality),
+                    type: VideoEpisodeUrlType.hls
+                })
+            }
+            res(createVideoEpisodeProvider({
+                name: `Crunchyroll (${Object.entries(this.LOCALES).find(loc => loc[1] === stream.hardsub_locale)?.[0] ?? "None"})`,
+                urls
+            }))
+        })) as Promise<VideoEpisodeProvider>[];
+        
         return createVideoEpisodeDetails({
             id,
             entryId,
-            providers: [
-                createVideoEpisodeProvider({
-                    name: "Crunchyroll (Adaptive)",
-                    urls: Object.values(streams).filter((stream: any) => stream.hardsub_locale === this.locale).map((stream: any) => createVideoEpisodeUrl({
-                        type: VideoEpisodeUrlType.hls,
-                        url: stream.url
-                    }))
-                })
-            ]
-        })
+            providers: await Promise.all(promises)
+        });
     }
     async getFilters(): Promise<Filter[]> {
         return []
