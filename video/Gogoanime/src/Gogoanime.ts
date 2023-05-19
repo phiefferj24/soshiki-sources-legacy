@@ -1,4 +1,4 @@
-import { createEntry, createEntryResults, createVideoEpisodeDetails, Entry, EntryContentRating, EntryResults, EntryResultsInfo, EntryStatus, FetchOptions, Listing, VideoEpisode, VideoEpisodeDetails, VideoSource, Filter, Document, createShortEntry, fetch, createMultiSelectFilter, createSortFilter, MultiSelectFilter, SortFilter, ShortEntry, createListing, createVideoEpisode, VideoEpisodeType, VideoEpisodeUrl, VideoEpisodeUrlType, createVideoEpisodeProvider, VideoEpisodeProvider, createSegmentFilter } from "soshiki-sources"
+import { createEntry, createEntryResults, createVideoEpisodeDetails, Entry, EntryContentRating, EntryResults, EntryResultsInfo, EntryStatus, FetchOptions, Listing, VideoEpisode, VideoEpisodeDetails, VideoSource, Filter, Document, createShortEntry, fetch, createMultiSelectFilter, createSortFilter, MultiSelectFilter, SortFilter, ShortEntry, createListing, createVideoEpisode, VideoEpisodeType, VideoEpisodeUrl, VideoEpisodeUrlType, createVideoEpisodeProvider, VideoEpisodeProvider, createSegmentFilter, createToggleFilter } from "soshiki-sources"
 import CryptoJS from "crypto-es"
 
 const BASE_URL = "https://gogoanime.cl"
@@ -144,8 +144,8 @@ export default class GogoanimeSource extends VideoSource {
     }
     async getEpisodeDetails(id: string, entryId: string): Promise<VideoEpisodeDetails> {
         const document = Document.parse(await fetch(`${BASE_URL}${id}`).then(res => res.data))
-        const gogoServerUrl = `https:${document.querySelector("div#load_anime > div > div > iframe").getAttribute("src")}`
-        const vidStreamingServerUrl = `https:${document.querySelector("div.anime_video_body > div.anime_muti_link > ul > li.vidcdn > a").getAttribute("data-video")}`
+        const gogoServerUrl = `${document.querySelector("div#load_anime > div > div > iframe").getAttribute("src")}`
+        const vidStreamingServerUrl = `${document.querySelector("div.anime_video_body > div.anime_muti_link > ul > li.vidcdn > a").getAttribute("data-video")}`
         const streamSBServerUrl = `${document.querySelector("div.anime_video_body > div.anime_muti_link > ul > li.streamsb > a").getAttribute("data-video")}`
         document.free()
 
@@ -153,16 +153,16 @@ export default class GogoanimeSource extends VideoSource {
         if (gogoServerUrl.match(URL_REGEX) !== null) {
             promises.push((async () => createVideoEpisodeProvider({
                 name: "GogoCDN",
-                urls: await this.getGogoCDNUrls(gogoServerUrl)
+                urls: await this.getGogoCDNUrls(gogoServerUrl.startsWith("http") ? gogoServerUrl : `https:${gogoServerUrl}`)
             }))())
         }
         if (vidStreamingServerUrl.match(URL_REGEX) !== null) {
             promises.push((async () => createVideoEpisodeProvider({
                 name: "Vidstreaming",
-                urls: await this.getGogoCDNUrls(vidStreamingServerUrl)
+                urls: await this.getGogoCDNUrls(vidStreamingServerUrl.startsWith("http") ? vidStreamingServerUrl : `https:${vidStreamingServerUrl}`)
             }))())
         }
-        if (streamSBServerUrl.match(URL_REGEX) !== null) {
+        if (streamSBServerUrl.match(URL_REGEX) !== null && !(this.getSettingsValue("disableStreamSB") === true)) {
             promises.push((async () => createVideoEpisodeProvider({
                 name: "StreamSB",
                 urls: await this.getStreamSBUrls(streamSBServerUrl)
@@ -272,6 +272,11 @@ export default class GogoanimeSource extends VideoSource {
                 value: "GogoCDN",
                 name: "Preferred Provider",
                 selections: ["GogoCDN", "Vidstreaming", "StreamSB"]
+            }),
+            createToggleFilter({
+                id: "disableStreamSB",
+                value: false,
+                name: "Disable StreamSB"
             })
         ]
     }
@@ -305,7 +310,6 @@ export default class GogoanimeSource extends VideoSource {
         const encryptedAjaxParams = `id=${encryptedKey}&alias=${id}&${decryptedToken}`
         
         document.free()
-        
         const encryptedData = await fetch(`${serverUrl.match(/(https?:)[^\?]*\?.*/)?.[1] ?? 'https:'}//${serverUrl.match(/https?:\/\/([^\/]*)/)?.[1] ?? ''}/encrypt-ajax.php?${encryptedAjaxParams}`, { 
             headers: { "X-Requested-With": "XMLHttpRequest" }
         }).then(res => { try { return JSON.parse(res.data).data } catch { return null } })
