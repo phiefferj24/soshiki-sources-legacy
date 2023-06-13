@@ -1,7 +1,7 @@
 import { createEntry, createEntryResults, createVideoEpisodeDetails, Entry, EntryContentRating, EntryResults, EntryResultsInfo, EntryStatus, FetchOptions, Listing, VideoEpisode, VideoEpisodeDetails, VideoSource, Filter, Document, createShortEntry, fetch, createMultiSelectFilter, createSortFilter, MultiSelectFilter, SortFilter, ShortEntry, createListing, createVideoEpisode, VideoEpisodeType, VideoEpisodeUrl, VideoEpisodeUrlType, createVideoEpisodeProvider, VideoEpisodeProvider, createSegmentFilter, createToggleFilter } from "soshiki-sources"
 import CryptoJS from "crypto-es"
 
-const BASE_URL = "https://gogoanime.cl"
+const BASE_URL = "https://gogoanime.hu"
 const AJAX_URL = "https://ajax.gogo-load.com"
 
 const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
@@ -168,7 +168,9 @@ export default class GogoanimeSource extends VideoSource {
                 urls: await this.getStreamSBUrls(streamSBServerUrl)
             }))())
         }
+        console.log("STARTING")
         const providers = (await Promise.all(promises)).filter(provider => provider.urls.length > 0).sort((a, b) => a.name === this.getSettingsValue("preferredProvider") ? -1 : b.name === this.getSettingsValue("preferredProvider") ? 1 : 0)
+        console.log(JSON.stringify(providers))
 
         return createVideoEpisodeDetails({
             id,
@@ -308,13 +310,14 @@ export default class GogoanimeSource extends VideoSource {
         const scriptValue = document.querySelector("script[data-name='episode']").getAttribute("data-value")
         const decryptedToken = CryptoJS.AES.decrypt(scriptValue, GOGO_KEYS.key, { iv: GOGO_KEYS.iv }).toString(CryptoJS.enc.Utf8)
         const encryptedAjaxParams = `id=${encryptedKey}&alias=${id}&${decryptedToken}`
-        
         document.free()
-        const encryptedData = await fetch(`${serverUrl.match(/(https?:)[^\?]*\?.*/)?.[1] ?? 'https:'}//${serverUrl.match(/https?:\/\/([^\/]*)/)?.[1] ?? ''}/encrypt-ajax.php?${encryptedAjaxParams}`, { 
-            headers: { "X-Requested-With": "XMLHttpRequest" }
-        }).then(res => { try { return JSON.parse(res.data).data } catch { return null } })
-        if (encryptedData === null) return []
 
+        const encryptedResponse = await fetch(`${serverUrl.match(/(https?:)[^\?]*\?.*/)?.[1] ?? 'https:'}//${serverUrl.match(/https?:\/\/([^\/]*)/)?.[1] ?? ''}/encrypt-ajax.php?${encryptedAjaxParams}`, { 
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        if (encryptedResponse.status !== 200) return []
+
+        const encryptedData = JSON.parse(encryptedResponse.data).data
         const decryptedData = JSON.parse(
             CryptoJS.enc.Utf8.stringify(
                 CryptoJS.AES.decrypt(encryptedData, GOGO_KEYS.secondKey, { iv: GOGO_KEYS.iv })
