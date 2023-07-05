@@ -12,7 +12,8 @@
     "soshiki-sources": "^0.2.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-env": "^7.22.6",
+    "adm-zip": "^0.5.10",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0"
   }
