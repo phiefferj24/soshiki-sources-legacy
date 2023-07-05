@@ -1,5 +1,5 @@
 {
-  "name": "gogoanime",
+  "name": "crunchyroll",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,10 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "soshiki-sources": "file:../../../soshiki-sources/soshiki-sources-0.2.1.tgz"
+    "soshiki-sources": "^0.2.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-env": "^7.22.6",
+    "adm-zip": "^0.5.10",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0"
   }

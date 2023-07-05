@@ -1,6 +1,6 @@
 import { createEntry, createEntryResults, createVideoEpisodeDetails, Entry, EntryContentRating, EntryResults, EntryResultsInfo, EntryStatus, FetchOptions, Listing, VideoEpisode, VideoEpisodeDetails, VideoSource, Filter, Document, createShortEntry, fetch, createMultiSelectFilter, createSortFilter, MultiSelectFilter, SortFilter, ShortEntry, createListing, createVideoEpisode, VideoEpisodeType, VideoEpisodeUrl, VideoEpisodeUrlType, createVideoEpisodeProvider, VideoEpisodeProvider, createSegmentFilter, createSelectFilter, createTextFilter, createVideoEpisodeUrl } from "soshiki-sources"
 
-export default class GogoanimeSource extends VideoSource {
+export default class CrunchrollSource extends VideoSource {
     BASE_URL = "https://beta-api.crunchyroll.com"
 
     AUTH_TOKEN = "Basic aHJobzlxM2F3dnNrMjJ1LXRzNWE6cHROOURteXRBU2Z6QjZvbXVsSzh6cUxzYTczVE1TY1k="
